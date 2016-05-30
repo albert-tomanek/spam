@@ -5,10 +5,10 @@
 #include <string.h>
 
 #define STRLEN 256
-#define VERSION 1	// int 1 - 255
+#define VERSION 1       // int 1 - 255
 #define SPAMFILESIZE 65534
 #define SPAMHEADERSIZE 63
-#define COMMAND "./spam" 	// This is the string put into the 'command' field, which can be executed. Note that it is limited to 30 chars long.
+#define COMMAND "./spam"        // This is the string put into the 'command' field, which can be executed. Note that it is limited to 30 chars long.
 
 // define the shell-specific commands...
 #define COMMAND_CLEAR "rm *.SPA"
@@ -16,8 +16,8 @@
 // For the .SPA spamfile format, see "spam format.asc"
 
 void generaterandomdata( uint8_t *data, int count);
-uint32_t sdbm_hash(uint8_t *data, int length);		// Hashes an array of bits
-void fputstrn(char *chars, FILE *file, int count);	// like fputs, but specifies limit
+uint32_t sdbm_hash(uint8_t *data, int length);          // Hashes an array of bits
+void fputstrn(char *chars, FILE *file, int count);      // like fputs, but specifies limit
 void spam();
 
 int main(int argc, char *argv[])
@@ -43,8 +43,8 @@ void spam()
 	uint32_t datahash;
 	
 	char command[34];
-	memset(command, '\0', 34); 		// clears the command field.
-	strcpy(command, COMMAND); 		// copies the default command string into 'command'.
+	memset(command, '\0', 34);              // clears the command field.
+	strcpy(command, COMMAND);               // copies the default command string into 'command'.
 	
 	uint8_t randomdata[datasize];
 	
@@ -55,46 +55,46 @@ void spam()
 		generaterandomdata(randomdata, datasize);
 		//strcpy("Testing.", randomdata);
 		
-		sprintf(filename, "SPAM_%X.SPA", file_no);		// %X - hex as upper case.
+		sprintf(filename, "SPAM_%X.SPA", file_no);              // %X - hex as upper case.
 	
 		FILE *out = fopen(filename, "w");
 		assert(out != NULL);
 		
-		fputc('S', out); 	// magic bytes
+		fputc('S', out);        // magic bytes
 		fputc('P', out);
 		fputc('A', out);
 		fputc('M', out);
 	
-		fputc((uint8_t) VERSION, out);	 // format version
+		fputc((uint8_t) VERSION, out);   // format version
 	
-		fputc(0x00, out);		// padding
+		fputc(0x00, out);               // padding
 		fputc(0x00, out);
 		
-		fwrite( &datasize , sizeof(uint16_t), 1, out); 		// fwrite( *data, sizeof data, count, filestream);
+		fwrite( &datasize , sizeof(uint16_t), 1, out);          // fwrite( *data, sizeof data, count, filestream);
 		
-		fputc(0x00, out);		// padding
+		fputc(0x00, out);               // padding
 		fputc(0x00, out);
 		
-		file_id = (uint32_t) file_no;		// In later versions a number more unique to the file will be generated
+		file_id = (uint32_t) file_no;           // In later versions a number more unique to the file will be generated
 		fwrite( &file_id , sizeof(uint32_t), 1, out);
 		
-		fputc(0x00, out);		// padding
+		fputc(0x00, out);               // padding
 		fputc(0x00, out);
 		
 		datahash = sdbm_hash(randomdata, datasize);
-		fwrite( &datahash , sizeof(uint32_t), 1, out); 		// 32-bit sdbm hash of the random data
+		fwrite( &datahash , sizeof(uint32_t), 1, out);          // 32-bit sdbm hash of the random data
 		
-		fputc(0x00, out);		// padding
+		fputc(0x00, out);               // padding
 		fputc(0x00, out);
 		
-		fputc(0xFF, out);		// private use
+		fputc(0xFF, out);               // private use
 		fputc(0xFF, out);
 		
-		fputc(0x00, out);		// more padding
+		fputc(0x00, out);               // more padding
 		
-		fputstrn(command, out, 34);		// see method at bottom of file.s
+		fputstrn(command, out, 34);             // see method at bottom of file.s
 		
-		fputc(0x00, out);		// even more padding
+		fputc(0x00, out);               // even more padding
 		fputc(0x00, out);
 		fputc(0x00, out);
 		fputc(0x00, out);
@@ -104,7 +104,7 @@ void spam()
 			fputc(randomdata[i], out);
 		}
 		
-		fputc(0x00, out);		// padding
+		fputc(0x00, out);               // padding
 		fputc(0x00, out);
 		
 		fclose(out);
@@ -120,7 +120,7 @@ void generaterandomdata( uint8_t *data, int count)
 	}
 }
 
-uint32_t sdbm_hash(uint8_t *data, int length)		// Hashes an array of bits
+uint32_t sdbm_hash(uint8_t *data, int length)           // Hashes an array of bits
 {
 	uint32_t hash = 0;
 	
